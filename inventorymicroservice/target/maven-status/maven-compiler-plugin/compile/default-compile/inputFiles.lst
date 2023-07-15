@@ -1,0 +1,5 @@
+D:\SAGA\inventorymicroservice\src\main\java\com\naren\inventory\InventoryApplication.java
+D:\SAGA\inventorymicroservice\src\main\java\com\naren\inventory\listener\InventoryListener.java
+D:\SAGA\inventorymicroservice\src\main\java\com\naren\inventory\controller\InventoryController.java
+D:\SAGA\inventorymicroservice\src\main\java\com\naren\inventory\config\KafkaProducerConfig.java
+D:\SAGA\inventorymicroservice\src\main\java\com\naren\inventory\config\KafkaConsumerConfig.java

@@ -1,0 +1,7 @@
+com\naren\model\inventory\Stock.class
+com\naren\model\movie\MovieUpdateRequestModel.class
+com\naren\model\category\CategoryDTO.class
+com\naren\model\order\CustomerOrder.class
+com\naren\model\order\VetaEvent.class
+com\naren\model\movie\MovieDTO.class
+com\naren\model\movie\MovieCreateRequestModel.class

@@ -1,0 +1,5 @@
+com\naren\shipment\config\KafkaProducerConfig.class
+com\naren\shipment\config\KafkaConsumerConfig$1.class
+com\naren\shipment\config\KafkaConsumerConfig.class
+com\naren\shipment\listener\ShipmentListener.class
+com\naren\shipment\ShipmentApplication.class

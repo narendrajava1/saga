@@ -1,0 +1,3 @@
+com\naren\movie\controller\MovieController.class
+com\naren\movie\MovieMicroserviceApplication.class
+com\naren\movie\service\MovieService.class

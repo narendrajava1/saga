@@ -1,0 +1,6 @@
+com\naren\inventory\config\KafkaConsumerConfig.class
+com\naren\inventory\InventoryApplication.class
+com\naren\inventory\controller\InventoryController.class
+com\naren\inventory\config\KafkaProducerConfig.class
+com\naren\inventory\config\KafkaConsumerConfig$1.class
+com\naren\inventory\listener\InventoryListener.class

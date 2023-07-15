@@ -1,0 +1,12 @@
+com\naren\inventory\repo\Inventory.class
+com\naren\movie\repo\MovieEntity.class
+com\naren\category\repo\CategoryRepository.class
+com\naren\shipment\repo\Shipment.class
+com\naren\inventory\repo\InventoryRepository.class
+com\naren\order\repo\OrderEntity.class
+com\naren\payment\repo\Payment.class
+com\naren\movie\repo\MovieRepository.class
+com\naren\payment\repo\PaymentRepository.class
+com\naren\order\repo\OrderRepository.class
+com\naren\shipment\repo\ShipmentRepository.class
+com\naren\category\repo\CategoryEntity.class
