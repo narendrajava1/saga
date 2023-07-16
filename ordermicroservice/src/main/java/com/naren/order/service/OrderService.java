@@ -43,7 +43,7 @@ public class OrderService {
 			event.setEvent(customerOrder);
 			event.setType("ORDER_CREATED");
 			CompletableFuture<SendResult<String, VetaEvent<CustomerOrder>>> completableFuture = kafkaTemplate
-					.send("new-orders", event);
+					.send("new-orders", "orders", event);
 			completableFuture.whenComplete(new BiConsumer<SendResult<String, VetaEvent<CustomerOrder>>, Throwable>() {
 
 				@Override

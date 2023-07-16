@@ -2,6 +2,7 @@ package com.naren.payment.listener;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.annotation.TopicPartition;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
@@ -22,9 +23,10 @@ public class ProcessPaymentListener {
 	@Autowired
 	private KafkaTemplate<String, VetaEvent<CustomerOrder>> kafkaTemplate;
 
-	@KafkaListener(topics = "new-orders", groupId = "orders-group", id = "orders")
-	public void processPayment(VetaEvent<CustomerOrder> record) throws JsonMappingException, JsonProcessingException {
-		VetaEvent<CustomerOrder> orderEvent = new ObjectMapper().readValue(record.toString(), VetaEvent.class);
+	@KafkaListener(topicPartitions = { @TopicPartition(topic = "new-orders", partitions = {
+			"0" }) }, groupId = "orders-group", containerFactory = "orderskafkaListenerContainerFactory")
+	public void processPayment(String message) throws JsonMappingException, JsonProcessingException {
+		VetaEvent<CustomerOrder> orderEvent = new ObjectMapper().readValue(message, VetaEvent.class);
 		CustomerOrder customerOrder = orderEvent.getEvent();
 		Payment payment = new Payment();
 		try {

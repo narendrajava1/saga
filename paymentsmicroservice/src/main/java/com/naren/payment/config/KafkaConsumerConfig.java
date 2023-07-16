@@ -15,24 +15,27 @@ import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.listener.CommonErrorHandler;
+import org.springframework.kafka.listener.ContainerProperties.AckMode;
 import org.springframework.kafka.listener.MessageListenerContainer;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 
 @Configuration
+@EnableKafka
 public class KafkaConsumerConfig {
 
 	@Value("${spring.kafka.consumer.bootstrap-servers:localhost:9093}")
 	private String bootstrapServers;
 
 	@Value("${payments.group-id}")
-	private String ordersGroupId;
+	private String paymentsGroupId;
 
 	@Value("${orders.group-id}")
-	private String paymentsGroupId;
+	private String ordersGroupId;
 
 	@Autowired
 	private KafkaProperties kafkaProperties;
@@ -72,6 +75,7 @@ public class KafkaConsumerConfig {
 		containerFactoryConfigurer.configure(concurrentKafkaListenerContainerFactory, ordersConsumerFactory());
 		concurrentKafkaListenerContainerFactory.setConcurrency(3);
 		concurrentKafkaListenerContainerFactory.setConsumerFactory(ordersConsumerFactory());
+		concurrentKafkaListenerContainerFactory.getContainerProperties().setAckMode(AckMode.MANUAL);
 		concurrentKafkaListenerContainerFactory.setCommonErrorHandler(new CommonErrorHandler() {
 			@Override
 			public boolean handleOne(Exception thrownException, ConsumerRecord<?, ?> record, Consumer<?, ?> consumer,
@@ -96,6 +100,7 @@ public class KafkaConsumerConfig {
 		containerFactoryConfigurer.configure(concurrentKafkaListenerContainerFactory, paymentsConsumerFactory());
 		concurrentKafkaListenerContainerFactory.setConcurrency(3);
 		concurrentKafkaListenerContainerFactory.setConsumerFactory(paymentsConsumerFactory());
+		concurrentKafkaListenerContainerFactory.getContainerProperties().setAckMode(AckMode.MANUAL);
 		concurrentKafkaListenerContainerFactory.setCommonErrorHandler(new CommonErrorHandler() {
 			@Override
 			public boolean handleOne(Exception thrownException, ConsumerRecord<?, ?> record, Consumer<?, ?> consumer,
