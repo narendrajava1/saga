@@ -46,7 +46,7 @@ public class ShipmentListener {
 			// InventoryEvent
 			VetaEvent<CustomerOrder> reverseEvent = new VetaEvent<CustomerOrder>();
 
-			reverseEvent.setType("INVENTORY_REVERSED");
+			reverseEvent.setOrderType("INVENTORY_REVERSED");
 			reverseEvent.setEvent(order);
 			this.kafkaTemplate.send("reversed-inventory", reverseEvent);
 		}

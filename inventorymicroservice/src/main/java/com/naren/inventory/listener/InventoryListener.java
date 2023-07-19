@@ -37,15 +37,14 @@ public class InventoryListener {
 
 				this.inventoryRepository.save(i);
 			});
-			vetaEvent.setType("INVENTORY_UPDATED");
+			vetaEvent.setOrderType("INVENTORY_UPDATED");
 			vetaEvent.setEvent(customerOrder);
 			this.kafkaTemplate.send("new-inventory", vetaEvent);
 		} catch (Exception e) {
 			// reverse previous task
 			VetaEvent<CustomerOrder> pe = new VetaEvent<>();
 			pe.setEvent(customerOrder);
-			pe.setType("ORDER_REVERSED");
-			pe.setType("PAYMENT_REVERSED");
+			pe.setOrderType("PAYMENT_REVERSED");
 			this.kafkaTemplate.send("reversed-payments", pe);
 		}
 	}
@@ -65,7 +64,7 @@ public class InventoryListener {
 			// reverse previous task
 			// paymentEvent
 			vetaEvent.setEvent(vetaEvent.getEvent());
-			vetaEvent.setType("PAYMENT_REVERSED");
+			vetaEvent.setOrderType("PAYMENT_REVERSED");
 			this.kafkaTemplate.send("reversed-payments", vetaEvent);
 		} catch (Exception e) {
 

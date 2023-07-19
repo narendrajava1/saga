@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class KafkaProducerConfig {
 
-	@Value("${spring.kafka.producer.bootstrap-servers: localhost:9093}")
+	@Value("${spring.kafka.producer.bootstrap-servers: localhost:9092}")
 	private String bootstrapServers;
 
 	@Bean

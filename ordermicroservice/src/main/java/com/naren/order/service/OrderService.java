@@ -41,7 +41,7 @@ public class OrderService {
 			// publish order created event for payment microservice to consume.
 			VetaEvent<CustomerOrder> event = new VetaEvent<>();
 			event.setEvent(customerOrder);
-			event.setType("ORDER_CREATED");
+			event.setOrderType("ORDER_CREATED");
 			CompletableFuture<SendResult<String, VetaEvent<CustomerOrder>>> completableFuture = kafkaTemplate
 					.send("new-orders", "orders", event);
 			completableFuture.whenComplete(new BiConsumer<SendResult<String, VetaEvent<CustomerOrder>>, Throwable>() {

@@ -24,11 +24,17 @@ import org.springframework.kafka.listener.ContainerProperties.AckMode;
 import org.springframework.kafka.listener.MessageListenerContainer;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 
+import com.naren.model.order.CustomerOrder;
+import com.naren.model.order.VetaEvent;
+
+import lombok.extern.slf4j.Slf4j;
+
 @Configuration
 @EnableKafka
+@Slf4j
 public class KafkaConsumerConfig {
 
-	@Value("${spring.kafka.consumer.bootstrap-servers:localhost:9093}")
+	@Value("${spring.kafka.consumer.bootstrap-servers:localhost:9092}")
 	private String bootstrapServers;
 
 	@Value("${payments.group-id}")
@@ -42,15 +48,17 @@ public class KafkaConsumerConfig {
 
 	@Bean(name = "ordersConsumerFactory")
 	@Primary
-	public ConsumerFactory<Object, Object> ordersConsumerFactory() {
+	public ConsumerFactory<String, VetaEvent<CustomerOrder>> ordersConsumerFactory() {
 		Map<String, Object> consumerConfigMap = new HashMap<>();
 		consumerConfigMap.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
 		consumerConfigMap.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
 		consumerConfigMap.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
 		consumerConfigMap.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 		consumerConfigMap.put(ConsumerConfig.GROUP_ID_CONFIG, ordersGroupId);
+		consumerConfigMap.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, true);
 		consumerConfigMap.putAll(this.kafkaProperties.buildConsumerProperties());
-		return new DefaultKafkaConsumerFactory<>(consumerConfigMap);
+		return new DefaultKafkaConsumerFactory<>(consumerConfigMap, new StringDeserializer(),
+                new JsonDeserializer<>(VetaEvent.class));
 
 	}
 
@@ -68,14 +76,14 @@ public class KafkaConsumerConfig {
 	}
 
 	@Bean
-	public ConcurrentKafkaListenerContainerFactory<Object, Object> orderskafkaListenerContainerFactory(
+	public ConcurrentKafkaListenerContainerFactory<String, VetaEvent<CustomerOrder>> orderskafkaListenerContainerFactory(
 			ConcurrentKafkaListenerContainerFactoryConfigurer containerFactoryConfigurer,
-			ObjectProvider<ConsumerFactory<Object, Object>> consumerFactoryObjectProvider) {
-		ConcurrentKafkaListenerContainerFactory<Object, Object> concurrentKafkaListenerContainerFactory = new ConcurrentKafkaListenerContainerFactory<>();
-		containerFactoryConfigurer.configure(concurrentKafkaListenerContainerFactory, ordersConsumerFactory());
+			ObjectProvider<ConsumerFactory<String, VetaEvent<CustomerOrder>>> consumerFactoryObjectProvider) {
+		ConcurrentKafkaListenerContainerFactory<String, VetaEvent<CustomerOrder>> concurrentKafkaListenerContainerFactory = new ConcurrentKafkaListenerContainerFactory<>();
+//		containerFactoryConfigurer.configure(concurrentKafkaListenerContainerFactory, ordersConsumerFactory());
 		concurrentKafkaListenerContainerFactory.setConcurrency(3);
 		concurrentKafkaListenerContainerFactory.setConsumerFactory(ordersConsumerFactory());
-		concurrentKafkaListenerContainerFactory.getContainerProperties().setAckMode(AckMode.MANUAL);
+//		concurrentKafkaListenerContainerFactory.getContainerProperties().setAckMode(AckMode.MANUAL);
 		concurrentKafkaListenerContainerFactory.setCommonErrorHandler(new CommonErrorHandler() {
 			@Override
 			public boolean handleOne(Exception thrownException, ConsumerRecord<?, ?> record, Consumer<?, ?> consumer,
@@ -89,6 +97,12 @@ public class KafkaConsumerConfig {
 				CommonErrorHandler.super.handleOtherException(thrownException, consumer, container, batchListener);
 			}
 		});
+		concurrentKafkaListenerContainerFactory.setErrorHandler((exception, data) -> {
+	         /* here you can do you custom handling, I am just logging it same as default Error handler does
+	        If you just want to log. you need not configure the error handler here. The default handler does it for you.
+	         Generally, you will persist the failed records to DB for tracking the failed records.  */
+	         log.error("Error in process with Exception {} and the record is {}", exception, data);
+	        });
 		return concurrentKafkaListenerContainerFactory;
 	}
 

@@ -7,6 +7,8 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.naren.model.order.CustomerOrder;
@@ -22,12 +24,18 @@ public class ProcessPaymentListener {
 
 	@Autowired
 	private KafkaTemplate<String, VetaEvent<CustomerOrder>> kafkaTemplate;
+	
 
-	@KafkaListener(topicPartitions = { @TopicPartition(topic = "new-orders", partitions = {
-			"0" }) }, groupId = "orders-group", containerFactory = "orderskafkaListenerContainerFactory")
-	public void processPayment(String message) throws JsonMappingException, JsonProcessingException {
-		VetaEvent<CustomerOrder> orderEvent = new ObjectMapper().readValue(message, VetaEvent.class);
-		CustomerOrder customerOrder = orderEvent.getEvent();
+	@KafkaListener(topics = "new-orders", groupId = "orders-group", containerFactory = "orderskafkaListenerContainerFactory")
+	public void processPayment(VetaEvent<CustomerOrder> consumerREcord) throws JsonMappingException, JsonProcessingException {
+		ObjectMapper objectMapper = new ObjectMapper();
+		objectMapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
+//		objectMapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
+		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,false);
+		System.out.println(consumerREcord);
+		VetaEvent<CustomerOrder> orderEvent =consumerREcord;
+		CustomerOrder customerOrder = objectMapper.convertValue(orderEvent.getEvent(), CustomerOrder.class);
+//		CustomerOrder customerOrder = (CustomerOrder)orderEvent.getEvent();
 		Payment payment = new Payment();
 		try {
 
@@ -42,7 +50,7 @@ public class ProcessPaymentListener {
 
 			VetaEvent<CustomerOrder> paymentEvent = new VetaEvent<>();
 			paymentEvent.setEvent(customerOrder);
-			paymentEvent.setType("PAYMENT_CREATED");
+			paymentEvent.setOrderType("PAYMENT_CREATED");
 			this.kafkaTemplate.send("new-payments", paymentEvent);
 		} catch (Exception e) {
 			payment.setOrderId(customerOrder.getOrderId());
@@ -52,7 +60,7 @@ public class ProcessPaymentListener {
 			// reverse previous task
 			VetaEvent<CustomerOrder> oe = new VetaEvent<>();
 			oe.setEvent(customerOrder);
-			oe.setType("ORDER_REVERSED");
+			oe.setOrderType("ORDER_REVERSED");
 			this.kafkaTemplate.send("reversed-orders", orderEvent);
 		}
 	}
@@ -76,7 +84,7 @@ public class ProcessPaymentListener {
 			// reverse previous task
 			VetaEvent<CustomerOrder> orderEvent = new VetaEvent<CustomerOrder>();
 			orderEvent.setEvent(paymentEvent.getEvent());
-			orderEvent.setType("ORDER_REVERSED");
+			orderEvent.setOrderType("ORDER_REVERSED");
 			this.kafkaTemplate.send("reversed-orders", orderEvent);
 
 		} catch (Exception e) {
