@@ -67,4 +67,16 @@ public class OrderService {
 		}
 	}
 
+	public VetaEvent<CustomerOrder> getOrderById(Long orderId) {
+		VetaEvent<CustomerOrder> vetaEvent=new VetaEvent<CustomerOrder>();
+		CustomerOrder customerOrder=new CustomerOrder();
+		OrderEntity orderEntity = orderRepository.findById(orderId).get();
+		customerOrder.setAmount(orderEntity.getAmount());
+		customerOrder.setItem(orderEntity.getItem());
+		vetaEvent.setOrderType("FETCHING");
+		vetaEvent.setEvent(customerOrder);
+		return vetaEvent;
+		
+	}
+
 }
