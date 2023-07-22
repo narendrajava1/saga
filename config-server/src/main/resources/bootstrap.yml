@@ -1,0 +1,5 @@
+encrypt:
+  key-store:
+    location: 'file:///${user.home}/Desktop/key/veta_server.jks'
+    password: 'Veta@123'
+    alias: secreateAlias

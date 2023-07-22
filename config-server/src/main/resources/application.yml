@@ -1,0 +1,23 @@
+eureka:
+  instance:
+    client:
+      serverUrl:
+        defaultZone: http://localhost:8761/eureka/
+
+server:
+  port: 8888
+spring:
+  application:
+    name: CONFIG-SERVER
+  cloud:
+    config:
+      server:
+        git:
+          clone-on-start: true
+          default-label: master
+          uri: https://github.com/narendrajava1/config-server-repo
+          
+
+
+    
+name: '{cipher}AQAC5vLn38pC5xOxDaUVYof4w8WgytS99rHRrZ5jU5CENbdOXWUXnCuc9FtJxgZUf6BoGOC2WDsvJPbO1u4bwMgMFe+jXbYJZ22zA7YXQj8X3TtXg0WJt784kBYzRk2MN7ZbtazxonHBeFqr3oDH7JbR60pOK879dSxnXxjUsbCzqptKgmZDwocqylC5d7um5KHyNe10CoVgBKjTuFoRJGfc5thX1Y5NYKYq9btYHZMJqjjsg8OMRvrb99bg/JW7mE+2zKzTiKGGHKCDuLGzO92N7FCvY6yLMWPgu/0oTaLuffaMAwIIhZVP4CkmPZx4Rt1qcd3yRqDKlxy/qzkl4+jKKE6tbA/8Us/U4ntfW2p2DYkdIgSHsmTmf1vqK8Eb7j0='
