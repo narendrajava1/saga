@@ -23,6 +23,19 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
+		<!--
+		https://mvnrepository.com/artifact/io.micrometer/micrometer-tracing-bom -->
+		<dependency>
+			<groupId>io.micrometer</groupId>
+			<artifactId>micrometer-tracing-bom</artifactId>
+			<version>1.1.3</version>
+			<type>pom</type>
+		</dependency>
+
+		<dependency>
+			<groupId>io.micrometer</groupId>
+			<artifactId>micrometer-tracing-bridge-brave</artifactId>
+		</dependency>
 		<!-- spring security -->
 		<!--<dependency>
 			<groupId>org.springframework.boot</groupId>

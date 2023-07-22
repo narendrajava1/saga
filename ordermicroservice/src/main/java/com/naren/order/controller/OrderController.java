@@ -12,8 +12,11 @@ import com.naren.model.order.CustomerOrder;
 import com.naren.model.order.VetaEvent;
 import com.naren.order.service.OrderService;
 
+import lombok.extern.slf4j.Slf4j;
+
 @RestController
 @RequestMapping("/orders")
+@Slf4j
 public class OrderController {
 
 	@Autowired
@@ -26,6 +29,7 @@ public class OrderController {
 	}
 	@GetMapping("/fetch")
 	public VetaEvent<CustomerOrder> findByOrderId(@RequestParam Long orderId) {
+		log.debug("fetching the order for this orderId {}",orderId);
 		return orderService.getOrderById(orderId);
 		
 	}
